@@ -1,4 +1,4 @@
-from typing import TypedDict, Annotated, List, Optional
+from typing_extensions import TypedDict, Annotated, List, Optional
 from pathlib import Path
 
 from langchain_core.messages import BaseMessage

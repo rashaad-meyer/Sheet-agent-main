@@ -106,3 +106,61 @@ for row in sheet["{cell_range}"]:
 
     response = executor.utilize(code)
     return response.obs
+
+
+@tool(name_or_callable="get_cumulative_rows", parse_docstring=True)
+def get_cumulative_rows(
+        sheet_name: str,
+        column: int,
+        regex_pattern: str,
+        state: Annotated[GraphState, InjectedState]
+) -> str:
+    """Identifies cumulative rows by searching for a pattern in a specific column.
+
+    This tool iterates through each cell in a given column and uses a regular expression
+    to determine if the row should be considered "cumulative." Use this after inspecting
+    the sheet to decide which column and pattern are best for identifying these rows.
+
+    Args:
+        sheet_name: The name of the sheet to analyze.
+        column: The 1-based index of the column to search within (e.g., 1 for column 'A', 2 for 'B').
+        regex_pattern: The regular expression pattern to match against cell values.
+                       The search is case-insensitive.
+
+    Returns:
+        A string containing the list of detected cumulative row numbers.
+    """
+    if not column:
+        return "Error: The 'column' argument is missing."
+
+    if not regex_pattern:
+        return "Error: The 'regex_pattern' argument is missing."
+
+    if not sheet_name:
+        return "Error: The 'sheet_name' argument is missing."
+
+    sandbox = state["sandbox"]
+    executor = PythonInterpreter(sandbox)
+
+    # Note: The column index is adjusted to be 0-based for pandas/openpyxl access.
+    code = f"""
+import re
+
+sheet = workbook["{sheet_name}"]
+cumulative_rows = []
+
+# Using iter_rows to go through the sheet row by row
+for i, row in enumerate(sheet.iter_rows(min_row=1), 1):
+    # Adjust for 0-based index and ensure the column exists
+    col_index = {column} - 1
+    if col_index < len(row):
+        cell_value = str(row[col_index].value)
+        # Check if the cell has a value before searching
+        if cell_value and re.search(r'{regex_pattern}', cell_value, re.IGNORECASE):
+            cumulative_rows.append(i)
+
+print(f"The following rows have been detected as cumulative: {{cumulative_rows}}")
+"""
+
+    response = executor.utilize(code)
+    return response.obs

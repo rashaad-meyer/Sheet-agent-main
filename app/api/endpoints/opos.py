@@ -10,6 +10,8 @@ from pydantic import BaseModel, HttpUrl, Field, field_validator
 from app.services.analysis_service import run_analysis
 
 router = APIRouter()
+
+# todo change
 PROMPT = f"""
 You have to analyze an open posts list from a company. It holds all unpaid invoices and credits for the company.
             
@@ -31,6 +33,7 @@ You have to analyze an open posts list from a company. It holds all unpaid invoi
                - Sometimes, the values such as invoice date, due date, etc are empty
                - Other forms of cumulative rows are rows that accumulate the entire file under a given filter.
                - Programmatically create a list of "cumulative" row numbers.
+               - Another solution for getting a list of cumulative rows is to use the get_cumulative_rows tool which you should use it if you think it fits the situation
                - Make sure to reuse the list accordingly in later steps.
             2. Create a list of "invoice" row numbers
                - You can tell that a row is an invoice row if it is not a "cumulative" row and has a POSITIVE invoice amount.

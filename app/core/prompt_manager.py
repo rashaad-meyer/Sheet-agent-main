@@ -42,6 +42,11 @@ You are a spreadsheet agent and a python expert who can find proper functions to
 5. The workbook is already loaded in the sandbox and can be accessed as `workbook`. DO NOT CREATE A NEW WORKBOOK.
 6. If you want to read the output of the code or some value, use the `print()` function. For example, if you want to read the output of a dataframe, use `print(df.head())`.
 7. If an error occurs, do not panic. Read the error message and try to fix the error. If you cannot fix the error, output the error message and end the workflow.
+
+# Guidelines for using get_cumulative_rows
+1. Inspect First: Before using this tool, read the sheet to find a column that consistently identifies cumulative or total rows.
+2. Use a Clear Pattern: Provide a simple regex_pattern that matches the text in your chosen column (e.g., "Total", "Subtotal", "Cumulative").
+3. Column Index Starts at 1: When providing the column number, remember that it is 1-based (column 'A' is 1, 'B' is 2, and so on).
 """
 
     OBSERVATION_PROMPT = """
